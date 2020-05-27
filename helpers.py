@@ -32,7 +32,7 @@ def fit_prepare(df, target, numerics, categorcials, indicators=None):
     :param df: data frame containing the data to be cleaned
     :param target: name of the fit target column (y)
     :param numerics: list of numerical columns to include
-    :param categoricals: list of categorcial columns to include
+    :param categorcials: list of categorcial columns to include
     :param indicators: optional list of preexisting indicator columns to include
     :returns: DataFrame of predictor vectors X and Series of target values y
     """
@@ -102,6 +102,7 @@ def multicategorical_to_dummies(multi: pd.Series, sep: AnyStr = ',', include_nan
         pvt[col] = pvt[col].apply(valid_value_intbool)
     pvt.rename(mapper=lambda x: multi.name + '_' + x, axis='columns', inplace=True)
     return pvt
+
 
 def cross_distances(df_row: pd.DataFrame, df_col: pd.DataFrame, distance_function=None):
     """Calculate distances between overlapping numeric columns of
