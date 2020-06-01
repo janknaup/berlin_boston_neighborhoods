@@ -13,6 +13,9 @@ Three questions can help them to find the right neighborhood for their stay and 
 2. Which neighborhoods in Berlin most closely fit he niches of the individual Boston neighborhoods?
 3. Which are the properties of the neighborhoods that are similar or different between the two cities?
 
+The results of this analysis have been posted at
+https://medium.com/@janknaup/this-is-what-berlin-would-look-like-if-you-teleported-its-neighborhoods-to-boston-fb1afe1b5022
+
 ## Data source
 Data is copied from Kaggle. Due to the large size, ist cannot be easily kept within the git repository. 
 
@@ -31,15 +34,25 @@ https://www.kaggle.com/brittabettendorf/berlin-airbnb-data?select=listings_summa
 
 ## Method of analysis
 The analysis heavily relies on descriptive statistics. Since the individual analyses rely on neighborhood means, plus 
-standard deviations and valid row counts, the handling of missing values is straightforward, they can simply be ignored. 
-The dangers of circular reasoning inherent in imputation are thus avoided. For some columns listing unique values,
-such as picture URLs, presence columns mapping valid entries to 1 and NaN to 0 are used instead.
+standard deviations and valid row counts, the handling of missing values is straightforward, they can simply be ignored.
+The pandas aggregate functions mean(), std(), sum() and count() only operate on the valid subset of each column. 
+Imputation by replacing mean values would be unsuitable. While not changing the means, it would unduly reduce the 
+standard deviations and inflate the sample counts, indicating a false sense of statistical significance in the 
+subsequent analysis of factor influence using Student's t-value. The same argument applies to replacing NaN with
+other values. In the pre-treatment of categorical factors, NaN values are taken into account by adding an N/A indicator
+column to use unavailability as an additional factor. Since all subsequent analysis is based on aggregate values, 
+further missing values will only occur if a factor is missing for a whole neighborhood. In practice, this only occured
+in the case where a column only held valid values for one of the cities. In these cases, the whole column was excluded
+as it effectively only holds a redundant indication that the two cities being compared are not the same.
+For some columns listing unique values, such as picture URLs, presence columns mapping valid entries to 1 and NaN 
+to 0 are used instead.
 
 Flag columns, i.e. the amenities column, are split into 0/1 indicator columns per flag. Categorical columns are 
 converted to 0/1 dummy indicator columns, dropping the first dummy value and adding a N/A column, in order to maintain 
 linear independence of the indicator columns.
 
-All boolean values are converted to 0/1 integer values. 
+All boolean values are converted to 0/1 integer values. The use of numerical indicators for boolean values 
+automatically provides a fraction of true values per column upon calculation of the mean, facilitating interpretation.
 
 To avoid that the comparison is dominated by the well known, purely geographical differences between Boston and Berlin,
 a number of columns are excluded, especially latitude, longitude, city, state, zipcode, country, street. Additionally, 
